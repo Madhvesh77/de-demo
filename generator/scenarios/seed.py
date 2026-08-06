@@ -9,40 +9,62 @@ from generator.repositories.product_repository import (
     save_categories,
     save_products,
 )
+from generator.transaction import transaction
 
 
 def seed_database():
 
-    print("\nGenerating Categories...")
+    with transaction() as cursor:
+        cursor.execute("TRUNCATE TABLE customer_campaigns RESTART IDENTITY CASCADE;")
+        cursor.execute("TRUNCATE TABLE marketing_campaigns RESTART IDENTITY CASCADE;")
+        cursor.execute("TRUNCATE TABLE returns RESTART IDENTITY CASCADE;")
+        cursor.execute("TRUNCATE TABLE payments RESTART IDENTITY CASCADE;")
+        cursor.execute("TRUNCATE TABLE order_items RESTART IDENTITY CASCADE;")
+        cursor.execute("TRUNCATE TABLE orders RESTART IDENTITY CASCADE;")
+        cursor.execute("TRUNCATE TABLE inventory RESTART IDENTITY CASCADE;")
+        cursor.execute("TRUNCATE TABLE products RESTART IDENTITY CASCADE;")
+        cursor.execute("TRUNCATE TABLE categories RESTART IDENTITY CASCADE;")
+        cursor.execute("TRUNCATE TABLE customers RESTART IDENTITY CASCADE;")
 
-    categories = generate_categories()
+        print("\nGenerating Categories...")
 
-    category_ids = save_categories(categories)
+        categories = generate_categories()
 
-    print(f"Created {len(category_ids)} categories.")
+        category_ids = save_categories(
+            cursor,
+            categories,
+        )
 
-    print("\nGenerating Products...")
+        print(f"Created {len(category_ids)} categories.")
 
-    products = []
+        products = []
 
-    for category_id in category_ids:
+        print("\nGenerating Products...")
+
+        for category_id in category_ids:
+
+            for _ in range(10):
+
+                products.append(
+                    generate_product(category_id)
+                )
+
+        save_products(
+            cursor,
+            products,
+        )
+
+        print(f"Created {len(products)} products.")
+
+        print("\nGenerating Customers...")
 
         for _ in range(10):
 
-            products.append(
-                generate_product(category_id)
+            save(
+                cursor,
+                generate_customer(),
             )
 
-    save_products(products)
+        print("Created 10 customers.")
 
-    print(f"Created {len(products)} products.")
-
-    print("\nGenerating Customers...")
-
-    for _ in range(10):
-
-        save(generate_customer())
-
-    print("Created 10 customers.")
-
-    print("\n✅ Seed completed.\n")
+    print("\n✅ Seed completed.")

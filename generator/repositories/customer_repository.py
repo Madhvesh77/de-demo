@@ -1,12 +1,7 @@
-from generator.connection import get_connection
 from generator.models.customer import Customer
 
 
-def save(customer: Customer) -> int:
-
-    connection = get_connection()
-
-    cursor = connection.cursor()
+def save(cursor, customer: Customer):
 
     cursor.execute(
         """
@@ -19,12 +14,9 @@ def save(customer: Customer) -> int:
         )
         VALUES
         (
-            %s,
-            %s,
-            %s,
-            %s
+            %s,%s,%s,%s
         )
-        RETURNING id;
+        RETURNING id
         """,
         (
             customer.customer_code,
@@ -34,12 +26,4 @@ def save(customer: Customer) -> int:
         ),
     )
 
-    customer_id = cursor.fetchone()[0]
-
-    connection.commit()
-
-    cursor.close()
-
-    connection.close()
-
-    return customer_id
+    return cursor.fetchone()[0]

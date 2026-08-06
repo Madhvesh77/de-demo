@@ -1,20 +1,21 @@
-from generator.connection import get_connection
-
-
-def save_categories(categories):
-
-    conn = get_connection()
-    cur = conn.cursor()
+def save_categories(cursor, categories):
 
     ids = []
 
     for category in categories:
 
-        cur.execute(
+        cursor.execute(
             """
-            INSERT INTO categories(name, status)
-            VALUES(%s,%s)
-            RETURNING id;
+            INSERT INTO categories
+            (
+                name,
+                status
+            )
+            VALUES
+            (
+                %s,%s
+            )
+            RETURNING id
             """,
             (
                 category,
@@ -22,24 +23,16 @@ def save_categories(categories):
             ),
         )
 
-        ids.append(cur.fetchone()[0])
-
-    conn.commit()
-
-    cur.close()
-    conn.close()
+        ids.append(cursor.fetchone()[0])
 
     return ids
 
 
-def save_products(products):
-
-    conn = get_connection()
-    cur = conn.cursor()
+def save_products(cursor, products):
 
     for product in products:
 
-        cur.execute(
+        cursor.execute(
             """
             INSERT INTO products
             (
@@ -62,8 +55,3 @@ def save_products(products):
                 product["status"],
             ),
         )
-
-    conn.commit()
-
-    cur.close()
-    conn.close()
