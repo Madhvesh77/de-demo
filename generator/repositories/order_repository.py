@@ -14,7 +14,7 @@ def save_order(cursor, order):
             0,
             %s
         )
-        RETURNING id;
+        RETURNING id
         """,
         (
             order["customer_id"],
@@ -77,5 +77,30 @@ def reduce_inventory(cursor, product_id, quantity):
         (
             quantity,
             product_id,
+        ),
+    )
+
+
+def save_payment(cursor, payment):
+
+    cursor.execute(
+        """
+        INSERT INTO payments
+        (
+            order_id,
+            amount,
+            type,
+            status
+        )
+        VALUES
+        (
+            %s,%s,%s,%s
+        )
+        """,
+        (
+            payment["order_id"],
+            payment["amount"],
+            payment["type"],
+            payment["status"],
         ),
     )

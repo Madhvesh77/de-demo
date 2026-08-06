@@ -1,10 +1,20 @@
 import random
 
-
-ORDER_STATUS = [
+ORDER_STATUSES = [
     "PLACED",
     "SHIPPED",
     "DELIVERED",
+]
+
+PAYMENT_STATUSES = [
+    "SUCCESS",
+    "FAILED",
+]
+
+PAYMENT_TYPES = [
+    "CARD",
+    "UPI",
+    "NET_BANKING",
 ]
 
 
@@ -12,7 +22,7 @@ def generate_order(customer_id):
 
     return {
         "customer_id": customer_id,
-        "status": random.choice(ORDER_STATUS),
+        "status": random.choice(ORDER_STATUSES),
     }
 
 
@@ -24,5 +34,18 @@ def generate_order_item(order_id, product_id, price):
         "order_id": order_id,
         "product_id": product_id,
         "quantity": quantity,
-        "amount": quantity * price,
+        "amount": round(price * quantity, 2),
+    }
+
+
+def generate_payment(order_id, amount):
+
+    return {
+        "order_id": order_id,
+        "amount": amount,
+        "type": random.choice(PAYMENT_TYPES),
+        "status": random.choices(
+            PAYMENT_STATUSES,
+            weights=[95, 5],
+        )[0],
     }

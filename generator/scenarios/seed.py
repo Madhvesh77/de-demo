@@ -11,6 +11,19 @@ from generator.repositories.product_repository import (
 )
 from generator.generators.inventory import generate_inventory
 from generator.repositories.inventory_repository import save_inventory
+from generator.generators.order import (
+    generate_order,
+    generate_order_item,
+    generate_payment,
+)
+
+from generator.repositories.order_repository import (
+    save_order,
+    save_order_item,
+    update_order_amount,
+    reduce_inventory,
+    save_payment,
+)
 from generator.transaction import transaction
 
 
@@ -112,7 +125,16 @@ def seed_database():
 
             product_id = customer_id
 
-            price = 1000
+            cursor.execute(
+                """
+                SELECT price
+                FROM products
+                WHERE id=%s
+                """,
+                (product_id,),
+            )
+
+            price = float(cursor.fetchone()[0])
 
             item = generate_order_item(
                 order_id,
@@ -120,7 +142,10 @@ def seed_database():
                 price,
             )
 
-            save_order_item(cursor, item)
+            save_order_item(
+                cursor,
+                item,
+            )
 
             update_order_amount(
                 cursor,
@@ -134,12 +159,15 @@ def seed_database():
                 item["quantity"],
             )
 
-            create_payment(
-                cursor,
+            payment = generate_payment(
                 order_id,
                 item["amount"],
             )
 
-        print("Created 10 orders.")
+            save_payment(
+                cursor,
+                payment,
+            )
 
+        print("Created 10 orders.")
     print("\n✅ Seed completed.")
