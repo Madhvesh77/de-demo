@@ -1,16 +1,48 @@
 from generator.generators.customer import generate_customer
+from generator.generators.product import (
+    generate_categories,
+    generate_product,
+)
+
 from generator.repositories.customer_repository import save
+from generator.repositories.product_repository import (
+    save_categories,
+    save_products,
+)
 
 
-def seed_database(number_of_customers: int = 10):
-    """
-    Populate the OLTP database with initial data.
-    """
+def seed_database():
 
-    print(f"\nGenerating {number_of_customers} customers...\n")
+    print("\nGenerating Categories...")
 
-    for _ in range(number_of_customers):
-        customer = generate_customer()
-        save(customer)
+    categories = generate_categories()
 
-    print("✅ Initial seed completed.\n")
+    category_ids = save_categories(categories)
+
+    print(f"Created {len(category_ids)} categories.")
+
+    print("\nGenerating Products...")
+
+    products = []
+
+    for category_id in category_ids:
+
+        for _ in range(10):
+
+            products.append(
+                generate_product(category_id)
+            )
+
+    save_products(products)
+
+    print(f"Created {len(products)} products.")
+
+    print("\nGenerating Customers...")
+
+    for _ in range(10):
+
+        save(generate_customer())
+
+    print("Created 10 customers.")
+
+    print("\n✅ Seed completed.\n")

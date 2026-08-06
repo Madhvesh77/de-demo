@@ -23,24 +23,24 @@ CREATE TABLE categories (
 
     id SERIAL PRIMARY KEY,
 
-    name VARCHAR(100),
+    name VARCHAR(100) UNIQUE NOT NULL,
 
-    status VARCHAR(30),
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    status VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE products (
 
     id SERIAL PRIMARY KEY,
 
-    category_id INT REFERENCES categories(id),
+    sku VARCHAR(30) UNIQUE NOT NULL,
 
-    name VARCHAR(200),
+    category_id INT NOT NULL REFERENCES categories(id),
 
-    price NUMERIC(10,2),
+    name VARCHAR(200) NOT NULL,
 
-    status VARCHAR(30),
+    price NUMERIC(10,2) NOT NULL,
+
+    status VARCHAR(20) NOT NULL,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
