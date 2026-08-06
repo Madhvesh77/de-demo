@@ -1,0 +1,30 @@
+name: Revenue
+
+description: >
+  Total money successfully collected from customers.
+
+business_definition: >
+  Revenue is calculated only from successful payment transactions.
+
+owner: Finance Team
+
+sql:
+
+  table: payments
+
+  aggregation: SUM(amount)
+
+filters:
+
+  status: SUCCESS
+
+do_not_use:
+
+  - orders.amount
+  - order_items.amount
+
+examples:
+
+  - "How much revenue did we make?"
+  - "Revenue by city"
+  - "Monthly revenue"
