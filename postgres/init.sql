@@ -3,12 +3,12 @@
 -- ======================================
 
 CREATE TABLE customers (
+
     id SERIAL PRIMARY KEY,
 
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
+    customer_code VARCHAR(30) UNIQUE NOT NULL,
 
-    email VARCHAR(255) UNIQUE,
+    first_name VARCHAR(50) NOT NULL,
 
     city VARCHAR(100),
 
