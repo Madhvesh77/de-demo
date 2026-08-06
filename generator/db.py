@@ -2,8 +2,11 @@ from dotenv import load_dotenv
 import os
 import psycopg
 
-load_dotenv()
+from pathlib import Path
 
+ROOT_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(ROOT_DIR / ".env")
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("DB_NAME")
