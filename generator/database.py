@@ -7,7 +7,7 @@ opens and closes PostgreSQL connections.
 
 from contextlib import contextmanager
 
-from generator.db import get_connection
+from generator.connection import get_connection
 
 @contextmanager
 def database_session():
