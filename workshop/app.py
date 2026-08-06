@@ -1,55 +1,68 @@
-from workshop.config import config
+from workshop.registry import ModuleRegistry
 from workshop.menu import Menu
+from workshop.config import config
 from workshop.stages import Stage
 
 
 def main():
 
-    current_stage = Stage(config.current_stage)
+    registry = ModuleRegistry()
+
+    menu = Menu()
 
     while True:
 
-        print("\n" + "=" * 60)
-        print("DATA ENGINEERING WORKSHOP")
-        print("=" * 60)
-
-        print(f"\nCurrent Stage : {current_stage}\n")
-
-        menu = Menu(current_stage)
-
-        menu.display()
-
-        try:
-
-            choice = int(input("\nChoice : "))
-
-        except ValueError:
-
-            continue
-
-        if choice == 0:
-
-            break
-
-        module = menu.get_module(choice)
-
-        if module is None:
-
-            print("\nInvalid Choice")
-
-            continue
+        stage = Stage(config.stage)
 
         print()
 
         print("=" * 60)
 
-        print(f"Running {module.name}")
+        print("DATA ENGINEERING WORKSHOP")
 
         print("=" * 60)
 
-        module.run()
+        print()
 
-        input("\nPress ENTER to return to menu...")
+        print(f"Current Stage : {stage}")
+
+        modules = registry.enabled_modules(stage)
+
+        menu.display(modules)
+
+        choice = input("\nChoice : ").lower()
+
+        if choice == "x":
+
+            break
+
+        if choice == "0":
+
+            if config.stage < len(Stage):
+
+                config.stage += 1
+
+            continue
+
+        if choice == "9":
+
+            if config.stage > 1:
+
+                config.stage -= 1
+
+            continue
+
+        try:
+
+            choice = int(choice)
+
+            modules[choice - 1].run()
+
+        except Exception as ex:
+
+            print(ex)
+
+        input("\nPress ENTER...")
 
 
 if __name__ == "__main__":

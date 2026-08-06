@@ -12,7 +12,7 @@ class AIModule(WorkshopModule):
 
     @property
     def stage(self):
-        return Stage.SEMANTIC_LAYER
+        return Stage.AI
 
     def run(self):
         main()

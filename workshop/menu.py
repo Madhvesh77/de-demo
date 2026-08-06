@@ -1,28 +1,17 @@
-from workshop.registry import ModuleRegistry
-
-
 class Menu:
 
-    def __init__(self, stage):
+    def display(self, modules):
 
-        self.registry = ModuleRegistry()
+        print()
 
-        self.modules = self.registry.get_by_stage(stage)
-
-    def display(self):
-
-        print("\nAvailable Actions\n")
-
-        for index, module in enumerate(self.modules, start=1):
+        for index, module in enumerate(modules, start=1):
 
             print(f"{index}. {module.name}")
 
-        print("\n0. Exit")
+        print()
 
-    def get_module(self, choice):
+        print("9. Previous Stage")
 
-        if choice < 1 or choice > len(self.modules):
+        print("0. Next Stage")
 
-            return None
-
-        return self.modules[choice - 1]
+        print("x. Exit")

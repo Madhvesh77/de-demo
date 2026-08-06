@@ -10,20 +10,27 @@ class ModuleRegistry:
     def __init__(self):
 
         self.modules = [
+
             GeneratorModule(),
+
             WarehouseModule(),
+
             FullRefreshModule(),
+
             IncrementalModule(),
-            AIModule(),
+
+            AIModule()
+
         ]
 
-    def get_all(self):
-        return self.modules
-
-    def get_by_stage(self, stage):
+    def enabled_modules(self, stage):
 
         return [
+
             module
+
             for module in self.modules
+
             if module.stage <= stage
+
         ]
