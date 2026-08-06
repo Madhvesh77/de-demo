@@ -51,11 +51,12 @@ CREATE TABLE inventory (
 
     id SERIAL PRIMARY KEY,
 
-    product_id INT REFERENCES products(id),
+    product_id INT NOT NULL
+        REFERENCES products(id),
 
-    quantity INT,
+    quantity INT NOT NULL,
 
-    status VARCHAR(30),
+    status VARCHAR(20) NOT NULL,
 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

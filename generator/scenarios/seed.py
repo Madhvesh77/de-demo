@@ -9,6 +9,8 @@ from generator.repositories.product_repository import (
     save_categories,
     save_products,
 )
+from generator.generators.inventory import generate_inventory
+from generator.repositories.inventory_repository import save_inventory
 from generator.transaction import transaction
 
 
@@ -55,6 +57,23 @@ def seed_database():
         )
 
         print(f"Created {len(products)} products.")
+
+        print("\nGenerating Inventory...")
+
+        inventory = []
+
+        for product_id in range(1, len(products) + 1):
+
+            inventory.append(
+                generate_inventory(product_id)
+            )
+
+        save_inventory(
+            cursor,
+            inventory,
+        )
+
+        print(f"Created {len(inventory)} inventory records.")
 
         print("\nGenerating Customers...")
 
