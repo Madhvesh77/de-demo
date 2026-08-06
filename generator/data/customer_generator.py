@@ -1,27 +1,15 @@
 """
-Generate fake customers and insert them into PostgreSQL.
+Customer Generator
 """
 
 from faker import Faker
-from pathlib import Path
-import sys
 
-# Allow importing db.py from parent folder
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.append(str(ROOT))
-
-from db import get_connection
+from generator.database import database_session
 
 fake = Faker()
 
 
-def generate_customer() -> int:
-    """
-    Creates one customer and returns its database ID.
-    """
-
-    connection = get_connection()
-    cursor = connection.cursor()
+def generate_customer(cursor):
 
     cursor.execute(
         """
@@ -43,34 +31,46 @@ def generate_customer() -> int:
             NOW(),
             NOW()
         )
-        RETURNING id;
+        RETURNING id
         """,
         (
-            fake.unique.bothify(text="CUST-#####"),
+            fake.unique.bothify("CUST-#####"),
             fake.first_name(),
             fake.city(),
             "ACTIVE",
         ),
     )
 
-    customer_id = cursor.fetchone()[0]
+    return cursor.fetchone()[0]
 
-    connection.commit()
 
-    cursor.close()
-    connection.close()
+def generate_customers(number_of_customers: int):
 
-    return customer_id
+    created = []
+
+    with database_session() as cursor:
+
+        for _ in range(number_of_customers):
+
+            customer_id = generate_customer(cursor)
+
+            created.append(customer_id)
+
+    return created
 
 
 if __name__ == "__main__":
 
-    NUMBER_OF_CUSTOMERS = 10
+    NUMBER_OF_CUSTOMERS = 20
 
-    print(f"Generating {NUMBER_OF_CUSTOMERS} customers...\n")
+    print(f"Generating {NUMBER_OF_CUSTOMERS} customers...")
 
-    for _ in range(NUMBER_OF_CUSTOMERS):
-        customer_id = generate_customer()
-        print(f"Created customer {customer_id}")
+    customer_ids = generate_customers(NUMBER_OF_CUSTOMERS)
 
-    print("\n✅ Done!")
+    print()
+
+    print(f"Created {len(customer_ids)} customers.")
+
+    print(f"First Customer ID : {customer_ids[0]}")
+
+    print(f"Last Customer ID  : {customer_ids[-1]}")
