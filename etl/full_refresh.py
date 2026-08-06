@@ -1,5 +1,7 @@
 import pandas as pd
 import psycopg
+from datetime import datetime
+import time
 
 from warehouse.connection import get_connection
 
@@ -24,6 +26,7 @@ TABLES = [
 
 def copy_table(pg_conn, duck_conn, table):
 
+    start = time.perf_counter()
     print(f"\nCopying {table}...")
 
     dataframe = pd.read_sql(
@@ -48,8 +51,35 @@ def copy_table(pg_conn, duck_conn, table):
         FROM temp_df
         """
     )
-
-    print(f"Rows copied : {len(dataframe)}")
+    duration = time.perf_counter() - start
+    duck_conn.execute(
+        """
+        INSERT OR REPLACE INTO etl_metadata
+        VALUES
+        (
+            ?,
+            CURRENT_TIMESTAMP,
+            (
+                SELECT MAX(id)
+                FROM temp_df
+            ),
+            ?,
+            ?,
+            ?
+        )
+        """,
+        (
+            table,
+            "SUCCESS",
+            len(dataframe),
+            duration,
+        ),
+    )
+    print(
+        f"{table:<20}"
+        f"{len(dataframe):>8} rows"
+        f"{duration:>10.3f}s"
+    )
 
     return len(dataframe)
 
