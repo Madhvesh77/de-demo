@@ -8,3 +8,4 @@ ollama
 sqlalchemy
 python-dotenv
 duckdb
+psycopg[binary]
