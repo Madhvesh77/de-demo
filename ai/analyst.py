@@ -3,6 +3,7 @@ import ollama
 from ai.schema_reader import read_schema
 
 from semantic.retriever import retrieve
+from ai.reasoning import explain
 
 
 schema = read_schema()
@@ -11,7 +12,7 @@ question = input(
     "Ask a business question: "
 )
 
-semantic_context = retrieve(question)
+semantic_context = explain(question)
 
 
 prompt = f"""
