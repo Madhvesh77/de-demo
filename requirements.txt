@@ -1,0 +1,8 @@
+psycopg[binary]
+duckdb
+faker
+streamlit
+pandas
+pyyaml
+ollama
+sqlalchemy
