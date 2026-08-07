@@ -1,28 +1,23 @@
 import psycopg
 
-connection = psycopg.connect(
+from cdc.sync import sync_payment
+
+conn = psycopg.connect(
     host="localhost",
     dbname="shopsmart",
     user="admin",
     password="shopsmart123",
+    autocommit=True,
 )
 
-connection.autocommit = True
+conn.execute("LISTEN payments_channel;")
 
-connection.execute(
-    "LISTEN payments_channel;"
-)
+print("Listening on payments_channel...")
 
-print("Listening...")
+for notify in conn.notifies():
 
-while True:
+    payment_id = int(notify.payload)
 
-    connection.poll()
+    print(f"Received payment {payment_id}")
 
-    while connection.notifies:
-
-        notify = connection.notifies.pop()
-
-        print(
-            f"Payment inserted: {notify.payload}"
-        )
+    sync_payment(payment_id)
