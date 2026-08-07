@@ -36,12 +36,6 @@ def build():
             """
         )
 
-        for table in TABLES:
-
-            conn.execute(
-                f"DROP TABLE main.{table}"
-            )
-
     conn.close()
 
 
