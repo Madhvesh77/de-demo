@@ -12,3 +12,9 @@ CREATE TABLE IF NOT EXISTS etl_metadata
 
     run_duration_seconds DOUBLE
 );
+
+CREATE SCHEMA IF NOT EXISTS bronze;
+
+CREATE SCHEMA IF NOT EXISTS silver;
+
+CREATE SCHEMA IF NOT EXISTS gold;
