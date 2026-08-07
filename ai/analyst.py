@@ -1,55 +1,102 @@
-import ollama
+def main():
+        
+    import duckdb
 
-from ai.schema_reader import read_schema
+    from ai.planner import create_plan
+    from ai.knowledge_engine import (
+        get_metric,
+    )
+    from ai.sql_generator import (
+        generate_sql,
+    )
 
-from semantic.retriever import retrieve
-from ai.reasoning import explain
+    db = duckdb.connect(
+        "warehouse/warehouse.db"
+    )
 
+    print("=" * 60)
+    print("🤖 AI DATA ANALYST")
+    print("=" * 60)
 
-schema = read_schema()
+    question = input("\nQuestion : ")
 
-question = input(
-    "Ask a business question: "
-)
+    plan = create_plan(question)
 
-semantic_context = explain(question)
+    metric = get_metric(plan["metric"])
 
+    print("\nBusiness Understanding")
+    print("-" * 40)
 
-prompt = f"""
+    print("Metric")
 
-You are an expert SQL analyst.
+    print(metric["name"])
 
-Relevant Business Context
+    print()
 
-{semantic_context}
+    print("Definition")
 
-Database Schema
+    print(metric.get("description", "No description available."))
 
-{schema}
+    print()
 
-Return ONLY executable DuckDB SQL.
+    print("\nBusiness Rules")
+    print("-" * 40)
 
-Question:
+    if "business_rules" in metric:
 
-{question}
+        for rule in metric["business_rules"]:
 
-"""
-print("\n========== PROMPT ==========\n")
-print(prompt)
-print("\n============================\n")
+            print(f"✓ {rule}")
 
-response = ollama.chat(
+    elif "filters" in metric:
 
-    model="llama3.2:3b",
+        print("Filters")
 
-    messages=[
-        {
-            "role":"user",
-            "content":prompt
-        }
-    ]
-)
+        for key, value in metric["filters"].items():
 
-print()
+            print(f"✓ {key} = {value}")
 
-print(response["message"]["content"])
+    else:
+
+        print("No business rules available.")
+
+    sql = generate_sql(
+        plan,
+        metric,
+    )
+
+    print("\nGenerated SQL")
+    print("-" * 40)
+
+    print(sql)
+
+    result = db.sql(sql).df()
+
+    print("\nResult")
+    print("-" * 40)
+
+    print(result)
+
+    print("\nBusiness Summary")
+    print("-" * 40)
+
+    if plan["metric"] == "Revenue":
+
+        revenue = result.iloc[0, 0]
+
+        print(
+
+            f"Today's successful revenue is ₹{revenue:,.2f}"
+
+        )
+
+    elif plan["metric"] == "Customer Lifetime Value":
+
+        print(
+
+            "These are the highest value customers."
+
+        )
+
+if __name__ == "__main__":
+    main()
