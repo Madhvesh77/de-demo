@@ -1,0 +1,58 @@
+tables:
+
+  payments:
+
+    description: >
+      Stores all customer payment transactions.
+
+    business_rules:
+
+      - Revenue is calculated ONLY from SUCCESS payments.
+      - FAILED payments must never be counted.
+      - REFUNDED payments reduce revenue.
+
+    columns:
+
+      amount:
+        business_name: Revenue
+        description: Amount successfully collected.
+
+      status:
+        description: SUCCESS, FAILED or REFUNDED.
+
+  orders:
+
+    description: >
+      Customer purchase orders.
+
+    business_rules:
+
+      - Order amount is NOT revenue.
+      - Revenue should come from payments.
+
+    columns:
+
+      amount:
+        description: Total order value.
+
+  order_items:
+
+    description: >
+      Individual purchased products.
+
+    columns:
+
+      amount:
+        description: Line item value.
+
+  customers:
+
+    description: Customer master table.
+
+  products:
+
+    description: Product catalogue.
+
+  inventory:
+
+    description: Current stock.

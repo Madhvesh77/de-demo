@@ -1,0 +1,27 @@
+Revenue:
+
+  synonyms:
+
+    - sales
+    - income
+    - earnings
+
+Customer:
+
+  synonyms:
+
+    - buyer
+    - shopper
+
+Product:
+
+  synonyms:
+
+    - item
+    - sku
+
+Inventory:
+
+  synonyms:
+
+    - stock
